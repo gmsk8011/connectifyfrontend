@@ -1,7 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checklogin = () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        navigate("/app");
+      }
+    };
+    checklogin();
+  }, []);
+
   return (
     <div className="h-5/6 w-5/6 bg-gray-400 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-10 flex flex-col items-center justify-center text-white gap-4 font-mono">
       <div className="text-4xl">Welcome to Connectify</div>
