@@ -17,7 +17,7 @@ const Connectify = () => {
       setauth(true);
     }
     const fetchData = async () => {
-      const response = await fetch("http://localhost:3000/users");
+      const response = await fetch("https://connectifybackend-82js.onrender.com/users");
       const { users } = await response.json();
       setfriends(users);
     };

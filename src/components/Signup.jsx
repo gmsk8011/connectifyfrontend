@@ -22,7 +22,7 @@ const Signup = () => {
     e.preventDefault();
     console.log(formData);
     try {
-      const response = await fetch("http://localhost:3000/register", {
+      const response = await fetch("https://connectifybackend-82js.onrender.com/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

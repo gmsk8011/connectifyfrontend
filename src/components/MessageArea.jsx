@@ -11,7 +11,7 @@ const Msginput = ({ selected, setselected, setauth }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("http://localhost:3000/messages");
+      const response = await fetch("https://connectifybackend-82js.onrender.com/messages");
       const { messages } = await response.json();
       settexts(messages);
     };
@@ -26,7 +26,7 @@ const Msginput = ({ selected, setselected, setauth }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/message", {
+      const response = await fetch("https://connectifybackend-82js.onrender.com/message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
