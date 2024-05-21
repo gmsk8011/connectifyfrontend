@@ -22,6 +22,11 @@ const Connectify = () => {
       setfriends(users);
     };
     fetchData();
+    const intervalId = setInterval(fetchData, 60000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   console.log({ selected });

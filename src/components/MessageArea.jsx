@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Pusher from "pusher-js";
 
 const Msginput = ({ selected, setselected, setauth }) => {
   const [msg, setmsg] = useState("");
@@ -11,12 +12,29 @@ const Msginput = ({ selected, setselected, setauth }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("https://connectifybackend-82js.onrender.com/messages");
+      const response = await fetch(
+        "https://connectifybackend-82js.onrender.com/messages"
+      );
       const { messages } = await response.json();
       settexts(messages);
     };
     fetchData();
-  }, [msg]);
+
+    // Initialize Pusher
+    const pusher = new Pusher("5efc00b7acf5bd33ed7d", {
+      cluster: "ap2",
+    });
+
+    const channel = pusher.subscribe("message");
+    channel.bind("new", (newMessage) => {
+      settexts((prevTexts) => [...prevTexts, newMessage]);
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [texts]);
 
   const handleChange = (e) => {
     const text = e.target.value;
@@ -26,14 +44,17 @@ const Msginput = ({ selected, setselected, setauth }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://connectifybackend-82js.onrender.com/message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(message),
-      });
-      
+      const response = await fetch(
+        "https://connectifybackend-82js.onrender.com/message",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(message),
+        }
+      );
+
       const chats = await response.json();
       console.log(chats);
       setmsg("");
@@ -41,10 +62,12 @@ const Msginput = ({ selected, setselected, setauth }) => {
       console.error(error);
     }
   };
+
   const cleartoken = () => {
     localStorage.clear();
     setauth(false);
   };
+
   return (
     <div className="h-full w-4/6 flex flex-col">
       <div className="w-full h-16 bg-white bg-opacity-20 p-4 flex items-center font-bold justify-between">
@@ -56,16 +79,16 @@ const Msginput = ({ selected, setselected, setauth }) => {
         {texts
           .filter(
             (i) =>
-              (i.sender == localStorage.getItem("id") &&
-                i.receiver == selected._id) ||
-              (i.receiver == localStorage.getItem("id") &&
-                i.sender == selected._id)
+              (i.sender === localStorage.getItem("id") &&
+                i.receiver === selected._id) ||
+              (i.receiver === localStorage.getItem("id") &&
+                i.sender === selected._id)
           )
           .map((i, index) => (
             <div
               key={index}
               className={`bg-white bg-opacity-20 p-2 rounded-2xl w-fit ${
-                localStorage.getItem("id") == i.sender ? `self-end` : ``
+                localStorage.getItem("id") === i.sender ? `self-end` : ``
               }`}
             >
               {i.msg}
